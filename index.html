@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IronForge Gym – Forge Your Legacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+/* ═══════════════════════════════════════════════
+   IRONFORGE GYM — SINGLE FILE SPA
+   ═══════════════════════════════════════════════ */
+:root{
+  --bg:#f4f3ef;--bg2:#ffffff;--bg3:#eceae4;
+  --text:#111;--text2:#444;--text3:#888;
+  --red:#e8292d;--red-dk:#b81f23;--red-lt:#ff5558;
+  --gold:#f5a623;
+  --border:rgba(0,0,0,0.09);
+  --shadow:0 4px 24px rgba(0,0,0,0.09);
+  --shadow-lg:0 12px 48px rgba(0,0,0,0.14);
+  --nav:68px;--r:12px;--r2:20px;--t:0.3s ease;
+}
+[data-theme=dark]{
+  --bg:#0d0d0d;--bg2:#181818;--bg3:#222;
+  --text:#f0f0f0;--text2:#ccc;--text3:#777;
+  --border:rgba(255,255,255,0.07);
+  --shadow:0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg:0 12px 48px rgba(0,0,0,0.7);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Barlow',sans-serif;background:var(--bg);color:var(--text);transition:background var(--t),color var(--t);overflow-x:hidden;line-height:1.6}
+img{display:block;max-width:100%}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* PAGES */
+.page{display:none;animation:fadeIn .35s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* UTILITIES */
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+.sec{padding:96px 0}
+.sec-sm{padding:64px 0}
+.center{text-align:center}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red);background:rgba(232,41,45,.1);padding:5px 14px;border-radius:50px;margin-bottom:14px}
+.title{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,5vw,4rem);letter-spacing:.04em;line-height:1;margin-bottom:14px}
+.title span{color:var(--red)}
+.sub{color:var(--text2);font-size:1rem;max-width:540px;margin:0 auto}
+.sec-head{text-align:center;margin-bottom:60px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 30px;border-radius:50px;font-weight:700;font-size:.9rem;letter-spacing:.04em;text-transform:uppercase;transition:all var(--t);cursor:pointer}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 4px 20px rgba(232,41,45,.32)}
+.btn-red:hover{background:var(--red-dk);transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,41,45,.42)}
+.btn-out{border:2px solid rgba(255,255,255,.65);color:#fff}
+.btn-out:hover{background:rgba(255,255,255,.12);transform:translateY(-2px)}
+.btn-ghost{border:2px solid var(--border);color:var(--text2);background:var(--bg2)}
+.btn-ghost:hover{border-color:var(--red);color:var(--red)}
+.btn-lg{padding:17px 42px;font-size:1rem}
+
+/* ── NAVBAR ── */
+#navbar{
+  position:fixed;top:0;left:0;right:0;z-index:900;
+  height:var(--nav);
+  transition:background var(--t),box-shadow var(--t);
+}
+#navbar.solid{background:var(--bg2);box-shadow:var(--shadow)}
+.nav-in{max-width:1240px;margin:0 auto;padding:0 24px;height:100%;display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:9px;font-family:'Bebas Neue',sans-serif;font-size:1.65rem;letter-spacing:.06em;color:#fff;transition:color var(--t)}
+#navbar.solid .logo{color:var(--text)}
+.logo i{color:var(--red)}
+.logo em{color:var(--red);font-style:normal}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links .nl{padding:8px 13px;border-radius:8px;font-weight:600;font-size:.88rem;letter-spacing:.02em;color:rgba(255,255,255,.88);transition:all var(--t);cursor:pointer}
+#navbar.solid .nav-links .nl{color:var(--text)}
+.nav-links .nl:hover,.nav-links .nl.active{color:var(--red)!important}
+.nl-cta{background:var(--red)!important;color:#fff!important;padding:9px 20px!important;border-radius:50px!important}
+.nl-cta:hover{background:var(--red-dk)!important;transform:translateY(-1px)}
+.nl-admin{opacity:.5;font-size:.95rem!important}
+.nl-admin:hover{opacity:1;color:var(--red)!important}
+.theme-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.95rem;color:rgba(255,255,255,.9);border:1.5px solid rgba(255,255,255,.25);transition:all var(--t)}
+#navbar.solid .theme-btn{color:var(--text);border-color:var(--border)}
+.theme-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.ham{display:none;flex-direction:column;gap:5px;padding:6px}
+.ham span{display:block;width:25px;height:2.5px;background:#fff;border-radius:2px;transition:all var(--t)}
+#navbar.solid .ham span{background:var(--text)}
+.ham.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.ham.open span:nth-child(2){opacity:0}
+.ham.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+
+/* Mobile nav */
+@media(max-width:768px){
+  .ham{display:flex}
+  .nav-links{
+    position:fixed;top:var(--nav);left:0;right:0;
+    background:var(--bg2);flex-direction:column;align-items:stretch;gap:0;
+    padding:16px 0;box-shadow:var(--shadow-lg);
+    transform:translateY(-110%);
+    transition:transform .38s cubic-bezier(.22,1,.36,1);z-index:899;
+  }
+  .nav-links.open{transform:translateY(0)}
+  .nav-links .nl{color:var(--text)!important;padding:14px 24px;border-radius:0;font-size:1rem}
+  .theme-btn{margin:10px 20px;width:auto;border-radius:10px;padding:12px 20px;justify-content:flex-start;gap:10px;color:var(--text)!important;border-color:var(--border)!important}
+}
+
+/* ── HERO ── */
+.hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover}
+.hero-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,0,0,.84) 0%,rgba(0,0,0,.48) 60%,rgba(232,41,45,.12) 100%)}
+.hero-ct{position:relative;z-index:2;max-width:1240px;margin:0 auto;padding:120px 24px 80px}
+.h-tag{font-size:.75rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--red);margin-bottom:14px;opacity:0;animation:up .8s .1s forwards}
+.h-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(3.8rem,11vw,9rem);line-height:.93;color:#fff;letter-spacing:.03em;margin-bottom:26px;opacity:0;animation:up .8s .25s forwards}
+.h-title span{color:var(--red)}
+.h-sub{color:rgba(255,255,255,.78);font-size:1.1rem;max-width:500px;margin-bottom:36px;opacity:0;animation:up .8s .4s forwards}
+.h-btns{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px;opacity:0;animation:up .8s .55s forwards}
+.h-stats{display:flex;align-items:center;opacity:0;animation:up .8s .7s forwards}
+.stat{text-align:center;padding:0 28px}.stat:first-child{padding-left:0}
+.s-num{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#fff;line-height:1}
+.s-plus{font-size:1.8rem;color:var(--red);font-weight:900}
+.stat p{color:rgba(255,255,255,.55);font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.s-div{width:1px;height:54px;background:rgba(255,255,255,.18)}
+.hero-scroll{position:absolute;bottom:32px;right:32px;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2}
+.hero-scroll span{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45);writing-mode:vertical-rl}
+.scroll-line{width:1.5px;height:56px;background:linear-gradient(to bottom,var(--red),transparent);animation:pulse 2s ease-in-out infinite}
+@keyframes up{to{opacity:1;transform:translateY(0)}from{opacity:0;transform:translateY(38px)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.35;transform:scaleY(.6)}}
+
+/* ── FEATURES ── */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px}
+.feat-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:34px 26px;transition:all var(--t)}
+.feat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--red)}
+.feat-icon{width:62px;height:62px;background:linear-gradient(135deg,var(--red),var(--red-lt));border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#fff;margin-bottom:18px;box-shadow:0 6px 20px rgba(232,41,45,.28)}
+.feat-card h3{font-size:1.15rem;font-weight:700;margin-bottom:8px}
+.feat-card p{color:var(--text2);font-size:.9rem;line-height:1.7}
+
+/* ── GALLERY STRIP ── */
+.gstrip{overflow:hidden;padding:20px 0;background:var(--bg3)}
+.gtrack{display:flex;gap:14px;animation:scroll 30s linear infinite;width:max-content}
+.gtrack:hover{animation-play-state:paused}
+.gtrack img{width:300px;height:190px;object-fit:cover;border-radius:var(--r);flex-shrink:0}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── PROGRAMS GRID ── */
+.prog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:26px}
+.prog-card{border-radius:var(--r2);overflow:hidden;background:var(--bg);border:1px solid var(--border);transition:all var(--t)}
+.prog-card:hover{transform:translateY(-7px);box-shadow:var(--shadow-lg)}
+.prog-card img{width:100%;height:210px;object-fit:cover;transition:transform .5s}
+.prog-card:hover img{transform:scale(1.06)}
+.prog-info{padding:22px}
+.prog-info h3{font-size:1.2rem;font-weight:700;margin-bottom:7px}
+.prog-info p{color:var(--text2);font-size:.88rem;margin-bottom:14px}
+.prog-link{display:inline-flex;align-items:center;gap:6px;color:var(--red);font-weight:700;font-size:.88rem;transition:gap var(--t)}
+.prog-link:hover{gap:12px}
+.badge-sm{display:inline-block;background:rgba(232,41,45,.1);color:var(--red);font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:50px;margin-right:4px;margin-bottom:10px}
+
+/* ── PLANS ── */
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px}
+.plan{border-radius:var(--r2);padding:38px 30px;border:2px solid var(--border);background:var(--bg);transition:all var(--t);position:relative;overflow:hidden}
+.plan.hot{border-color:var(--red);background:var(--red);color:#fff}
+.plan-top-badge{position:absolute;top:18px;right:18px;background:#fff;color:var(--red);font-size:.68rem;font-weight:700;letter-spacing:.1em;padding:3px 12px;border-radius:50px;text-transform:uppercase}
+.plan h3{font-size:1.25rem;font-weight:700;margin-bottom:6px}
+.plan-price{margin:18px 0}
+.plan-price .amt{font-family:'Bebas Neue',sans-serif;font-size:3.4rem;line-height:1}
+.plan-price .per{font-size:.88rem;opacity:.7}
+.plan-feats{display:flex;flex-direction:column;gap:11px;margin:22px 0}
+.plan-feats li{display:flex;align-items:center;gap:9px;font-size:.88rem}
+.plan-feats li i{color:var(--red)}
+.plan.hot .plan-feats li i{color:#fff}
+.plan:hover:not(.hot){border-color:var(--red);transform:translateY(-4px);box-shadow:var(--shadow)}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:22px}
+.testi{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:30px;transition:all var(--t)}
+.testi:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.stars{color:var(--gold);margin-bottom:14px;letter-spacing:2px}
+.testi p{color:var(--text2);font-size:.9rem;line-height:1.75;margin-bottom:18px;font-style:italic}
+.t-auth{display:flex;align-items:center;gap:12px}
+.t-auth img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--red)}
+.t-auth strong{display:block;font-size:.9rem}
+.t-auth span{font-size:.78rem;color:var(--text3)}
+
+/* ── TRAINERS ── */
+.trainer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px}
+.trainer{border-radius:var(--r2);overflow:hidden;background:var(--bg);border:1px solid var(--border);transition:all var(--t)}
+.trainer:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+.tr-img{position:relative;overflow:hidden}
+.tr-img img{width:100%;height:270px;object-fit:cover;transition:transform .5s}
+.trainer:hover .tr-img img{transform:scale(1.07)}
+.tr-soc{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);padding:24px 18px 12px;display:flex;gap:10px;opacity:0;transition:opacity var(--t)}
+.trainer:hover .tr-soc{opacity:1}
+.tr-soc a{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;color:#fff;font-size:.82rem;transition:background var(--t)}
+.tr-soc a:hover{background:var(--red)}
+.tr-info{padding:18px}
+.tr-info h3{font-size:1.05rem;font-weight:700;margin-bottom:3px}
+.tr-info .role{font-size:.82rem;color:var(--red);font-weight:600}
+
+/* ── CTA BANNER ── */
+.cta-ban{position:relative;padding:110px 0;text-align:center;overflow:hidden}
+.cta-ban-bg{position:absolute;inset:0}
+.cta-ban-bg img{width:100%;height:100%;object-fit:cover}
+.cta-ov{position:absolute;inset:0;background:rgba(0,0,0,.75)}
+.cta-ct{position:relative;z-index:2}
+.cta-ct h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,6vw,5.5rem);color:#fff;line-height:1;margin-bottom:18px;letter-spacing:.04em}
+.cta-ct h2 span{color:var(--red)}
+.cta-ct p{color:rgba(255,255,255,.72);font-size:1.05rem;margin-bottom:36px}
+
+/* ── CLIENTS SECTION ── */
+.c-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:36px}
+.c-stat{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:18px 20px;text-align:center}
+.c-stat .n{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1}
+.c-stat .l{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin-top:3px}
+.c-stat.green .n{color:#22c55e}
+.c-stat.red .n{color:var(--red)}
+.search-bar{max-width:520px;margin:0 auto 32px;position:relative}
+.search-bar input{width:100%;padding:14px 18px 14px 48px;border-radius:50px;border:2px solid var(--border);background:var(--bg2);font-size:.95rem;color:var(--text);outline:none;transition:border-color var(--t),box-shadow var(--t)}
+.search-bar input:focus{border-color:var(--red);box-shadow:0 0 0 4px rgba(232,41,45,.09)}
+.search-bar i{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--text3)}
+.filt-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:32px}
+.ftab{padding:7px 18px;border-radius:50px;font-weight:700;font-size:.82rem;border:2px solid var(--border);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all var(--t)}
+.ftab.on,.ftab:hover{background:var(--red);border-color:var(--red);color:#fff}
+.clients-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px}
+.cl-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:22px 18px;text-align:center;cursor:pointer;transition:all var(--t)}
+.cl-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--red)}
+.cl-card img,.cl-av{width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid var(--red);margin:0 auto 12px}
+.cl-av{background:linear-gradient(135deg,var(--red),var(--red-lt));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:#fff}
+.cl-card h3{font-size:.95rem;font-weight:700;margin-bottom:5px}
+.cl-plan{display:inline-block;background:rgba(232,41,45,.1);color:var(--red);font-size:.7rem;font-weight:700;padding:2px 10px;border-radius:50px;margin-bottom:7px}
+.cl-dates{font-size:.72rem;color:var(--text3)}
+.cl-status{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;margin-top:7px}
+.cl-status.act{color:#22c55e}
+.cl-status.exp{color:var(--red)}
+.cl-status i{font-size:.5rem}
+.empty-state{text-align:center;padding:72px 20px;color:var(--text3)}
+.empty-state i{font-size:2.8rem;margin-bottom:14px;display:block;opacity:.3}
+
+/* ── REGISTER PAGE ── */
+.reg-wrap{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - var(--nav))}
+.reg-vis{position:relative;overflow:hidden}
+.reg-vis img{width:100%;height:100%;object-fit:cover}
+.reg-vis-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(232,41,45,.72),rgba(0,0,0,.6));display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;color:#fff}
+.reg-vis-ov h2{font-family:'Bebas Neue',sans-serif;font-size:3.4rem;line-height:1;margin-bottom:14px}
+.reg-form-sec{display:flex;align-items:center;justify-content:center;padding:60px 36px;background:var(--bg2)}
+.reg-inner{width:100%;max-width:420px}
+.reg-inner h2{font-family:'Bebas Neue',sans-serif;font-size:2.7rem;margin-bottom:6px}
+.reg-inner>p{color:var(--text2);margin-bottom:32px}
+@media(max-width:768px){
+  .reg-wrap{grid-template-columns:1fr}
+  .reg-vis{display:none}
+  .reg-form-sec{padding:40px 22px}
+}
+
+/* ── FORM ELEMENTS ── */
+.fg{margin-bottom:20px}
+.fg label{display:block;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.fg input,.fg select,.fg textarea{width:100%;padding:13px 16px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r);font-size:.93rem;color:var(--text);outline:none;transition:border-color var(--t),box-shadow var(--t)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,41,45,.1)}
+.fg .ico-wrap{position:relative}
+.fg .ico-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text3)}
+.fg .ico-wrap input{padding-left:38px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:500px){.f-row{grid-template-columns:1fr}}
+.sub-btn{width:100%;padding:15px;background:var(--red);color:#fff;border-radius:var(--r);font-size:.95rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;transition:all var(--t);box-shadow:0 4px 18px rgba(232,41,45,.28)}
+.sub-btn:hover{background:var(--red-dk);transform:translateY(-1px);box-shadow:0 8px 26px rgba(232,41,45,.38)}
+.success-msg{background:rgba(34,197,94,.1);border:1px solid #22c55e;color:#16a34a;padding:18px;border-radius:var(--r);text-align:center;margin-bottom:18px;display:none}
+.success-msg.show{display:block}
+
+/* ── UPLOAD AREA ── */
+.upload-area{border:2px dashed var(--border);border-radius:var(--r);padding:36px;text-align:center;cursor:pointer;transition:all var(--t)}
+.upload-area:hover{border-color:var(--red);background:rgba(232,41,45,.03)}
+.upload-area i{font-size:2.4rem;color:var(--text3);margin-bottom:8px}
+.upload-area p{color:var(--text3);font-size:.88rem}
+.upload-area .prev{max-width:100px;border-radius:var(--r);margin:0 auto 8px;display:none}
+
+/* ── ABOUT PAGE ── */
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:68px;align-items:center}
+@media(max-width:900px){.ab-grid{grid-template-columns:1fr;gap:36px}}
+.ab-img-wrap{position:relative}
+.ab-img-wrap img{border-radius:var(--r2);box-shadow:var(--shadow-lg)}
+.ab-badge{position:absolute;bottom:-18px;right:-18px;background:var(--red);color:#fff;padding:18px 22px;border-radius:var(--r);text-align:center;font-family:'Bebas Neue',sans-serif;box-shadow:0 8px 24px rgba(232,41,45,.38)}
+.ab-badge .n{font-size:2.8rem;line-height:1}
+.ab-badge .l{font-size:.65rem;letter-spacing:.1em;opacity:.88}
+.ab-text h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.4rem);margin-bottom:18px;line-height:1.05}
+.ab-text h2 span{color:var(--red)}
+.ab-text p{color:var(--text2);margin-bottom:14px;line-height:1.8}
+.ab-vals{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.ab-val{display:flex;align-items:center;gap:9px;font-weight:600;font-size:.88rem}
+.ab-val i{color:var(--red)}
+
+/* ── ADMIN LOGIN ── */
+.adm-login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.adm-box{background:var(--bg2);border-radius:var(--r2);padding:48px 40px;width:100%;max-width:380px;border:1px solid var(--border);box-shadow:var(--shadow-lg);text-align:center}
+.adm-icon{width:68px;height:68px;background:linear-gradient(135deg,var(--red),var(--red-lt));border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#fff;margin:0 auto 22px;box-shadow:0 8px 22px rgba(232,41,45,.32)}
+.adm-box h2{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;margin-bottom:6px}
+.adm-box>p{color:var(--text3);font-size:.88rem;margin-bottom:28px}
+.adm-err{background:rgba(232,41,45,.1);border:1px solid var(--red);color:var(--red);padding:11px 14px;border-radius:var(--r);font-size:.88rem;margin-top:14px;display:none}
+.adm-err.show{display:block;animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* ── ADMIN DASHBOARD ── */
+.adm-bar{background:var(--bg2);border-bottom:1px solid var(--border);position:sticky;top:var(--nav);z-index:100}
+.adm-tabs-row{display:flex;gap:4px;padding:10px 24px;flex-wrap:wrap;max-width:1240px;margin:0 auto}
+.adm-tab{padding:9px 22px;border-radius:50px;font-weight:700;font-size:.86rem;letter-spacing:.03em;color:var(--text2);transition:all var(--t);text-transform:uppercase;cursor:pointer}
+.adm-tab.on{background:var(--red);color:#fff}
+.adm-tab:hover:not(.on){background:var(--bg3)}
+.adm-sec{display:none;padding:48px 0}
+.adm-sec.on{display:block}
+.adm-card{background:var(--bg2);border-radius:var(--r2);padding:36px;border:1px solid var(--border);max-width:680px}
+.adm-card h3{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;margin-bottom:24px}
+.adm-list{display:flex;flex-direction:column;gap:14px}
+.adm-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:18px 22px;display:flex;align-items:center;gap:14px;transition:all var(--t)}
+.adm-row:hover{border-color:var(--red)}
+.adm-row img,.adm-av{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--red);flex-shrink:0}
+.adm-av{background:linear-gradient(135deg,var(--red),var(--red-lt));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:#fff}
+.adm-info{flex:1}
+.adm-info h4{font-size:.96rem;font-weight:700}
+.adm-info p{font-size:.8rem;color:var(--text3);margin-top:2px}
+.adm-acts{display:flex;gap:7px;flex-shrink:0}
+.edit-btn{padding:7px 16px;background:var(--red);color:#fff;border-radius:50px;font-size:.82rem;font-weight:700;transition:all var(--t);cursor:pointer;border:none}
+.edit-btn:hover{background:var(--red-dk);transform:translateY(-1px)}
+.del-btn{padding:7px 13px;background:var(--bg3);color:var(--text2);border-radius:50px;font-size:.82rem;transition:all var(--t);cursor:pointer;border:none;font-family:inherit}
+.del-btn:hover{background:var(--red);color:#fff}
+
+/* ── MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.74);z-index:2000;align-items:center;justify-content:center;padding:22px;backdrop-filter:blur(6px)}
+.modal-ov.open{display:flex}
+.modal{background:var(--bg2);border-radius:var(--r2);padding:36px;max-width:500px;width:100%;position:relative;animation:mIn .3s cubic-bezier(.22,1,.36,1);max-height:90vh;overflow-y:auto}
+@keyframes mIn{from{opacity:0;transform:scale(.88) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.m-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--bg3);color:var(--text);transition:all var(--t);cursor:pointer;border:none}
+.m-close:hover{background:var(--red);color:#fff}
+.m-img{width:96px;height:96px;border-radius:50%;object-fit:cover;border:4px solid var(--red);margin:0 auto 18px;display:block}
+.m-av{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red-lt));display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:2.4rem;color:#fff;margin:0 auto 18px;border:4px solid var(--red)}
+.m-title{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;text-align:center;margin-bottom:22px}
+.m-row{display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:.88rem}
+.m-row:last-child{border-bottom:none}
+.m-row span:first-child{color:var(--text3);font-weight:600}
+.m-row span:last-child{font-weight:700}
+
+/* ── PAGE HERO ── */
+.pg-hero{position:relative;min-height:340px;display:flex;align-items:flex-end;padding-bottom:52px;overflow:hidden}
+.pg-hero-bg{position:absolute;inset:0}
+.pg-hero-bg img{width:100%;height:100%;object-fit:cover}
+.pg-hero-ov{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.8))}
+.pg-hero-ct{position:relative;z-index:2}
+.breadcrumb{font-size:.82rem;color:rgba(255,255,255,.55);margin-bottom:10px}
+.breadcrumb a{color:var(--red);cursor:pointer}
+.pg-hero-ct h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.8rem,7vw,5.8rem);color:#fff;line-height:1;letter-spacing:.04em}
+.pg-hero-ct h1 span{color:var(--red)}
+
+/* ── CLIENTS BANNER (home) ── */
+.cl-ban{background:var(--bg3)}
+.cl-ban-in{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+@media(max-width:768px){.cl-ban-in{grid-template-columns:1fr}.cl-ban-img{display:none}}
+.cl-ban-text h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.2rem,4vw,3.2rem);line-height:1.05;margin-bottom:14px}
+.cl-ban-text h2 span{color:var(--red)}
+.cl-ban-text p{color:var(--text2);margin-bottom:24px}
+.cl-ban-img img{border-radius:var(--r2);box-shadow:var(--shadow-lg)}
+
+/* ── FOOTER ── */
+.footer{background:#080808;color:rgba(255,255,255,.65);padding:68px 0 0}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1.5fr;gap:44px;padding-bottom:52px}
+@media(max-width:900px){.foot-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.foot-grid{grid-template-columns:1fr}}
+.foot-brand .logo{color:#fff;font-size:1.55rem;margin-bottom:14px}
+.foot-brand p{font-size:.88rem;line-height:1.7;margin-bottom:22px;max-width:240px}
+.soc-links{display:flex;gap:10px}
+.soc-links a{width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;transition:all var(--t)}
+.soc-links a:hover{background:var(--red);border-color:var(--red);color:#fff}
+.foot-col h4{color:#fff;font-size:.88rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px}
+.foot-col ul{display:flex;flex-direction:column;gap:9px}
+.foot-col ul li span{font-size:.88rem;transition:color var(--t);cursor:pointer}
+.foot-col ul li span:hover{color:var(--red)}
+.foot-col p{font-size:.88rem;margin-bottom:9px;display:flex;align-items:flex-start;gap:9px}
+.foot-col p i{color:var(--red);margin-top:3px;width:14px}
+.foot-bot{border-top:1px solid rgba(255,255,255,.07);padding:18px 0;display:flex;align-items:center;justify-content:space-between;font-size:.82rem;flex-wrap:wrap;gap:10px}
+.adm-foot-link{opacity:.38;transition:opacity var(--t);font-size:.78rem;cursor:pointer}
+.adm-foot-link:hover{opacity:1;color:var(--red)}
+
+/* ── SCROLL TOP ── */
+#scrollTop{position:fixed;bottom:26px;right:26px;width:46px;height:46px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.95rem;box-shadow:0 4px 16px rgba(232,41,45,.38);opacity:0;pointer-events:none;transition:all var(--t);z-index:500;cursor:pointer;border:none}
+#scrollTop.vis{opacity:1;pointer-events:all}
+#scrollTop:hover{transform:translateY(-3px)}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:22px;right:22px;background:#111;color:#fff;padding:13px 22px;border-radius:var(--r);font-size:.88rem;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:all .38s cubic-bezier(.22,1,.36,1);display:flex;align-items:center;gap:9px;border-left:4px solid var(--red);box-shadow:var(--shadow-lg);max-width:320px}
+#toast.show{transform:translateY(0);opacity:1}
+#toast.ok{border-left-color:#22c55e}
+
+/* ── LOADING ── */
+#fb-loading{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff}
+.spin{width:44px;height:44px;border:3px solid rgba(255,255,255,.18);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESPONSIVE MISC */
+@media(max-width:640px){
+  .h-stats{flex-wrap:wrap;justify-content:center;gap:8px}
+  .s-div{display:none}
+  .stat{padding:0 18px}
+  .h-btns{flex-direction:column}
+  .adm-row{flex-wrap:wrap}
+  .f-row{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .clients-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+  .adm-tabs-row{padding:10px 12px}
+}
+</style>
+</head>
+<body>
+
+<!-- ████ LOADING SCREEN ████ -->
+<div id="fb-loading">
+  <div class="spin"></div>
+  <p style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:.1em;">IRONFORGE</p>
+  <p style="font-size:.82rem;opacity:.55;margin-top:4px;">Connecting...</p>
+</div>
+
+<!-- ████ TOAST ████ -->
+<div id="toast"></div>
+
+<!-- ████ SCROLL TOP ████ -->
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+
+<!-- ████ NAVBAR ████ -->
+<nav id="navbar">
+  <div class="nav-in">
+    <div class="logo" onclick="nav('home')" style="cursor:pointer">
+      <i class="fas fa-dumbbell"></i>
+      IRON<em>FORGE</em>
+    </div>
+    <button class="ham" id="ham"><span></span><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><span class="nl" onclick="nav('home')">Home</span></li>
+      <li><span class="nl" onclick="nav('about')">About</span></li>
+      <li><span class="nl" onclick="nav('programs')">Programs</span></li>
+      <li><span class="nl" onclick="nav('clients')">Clients</span></li>
+      <li><span class="nl nl-cta" onclick="nav('register')">Join Now</span></li>
+      <li><button class="theme-btn" id="themeBtn"><i class="fas fa-moon" id="themeIco"></i></button></li>
+      <li><span class="nl nl-admin" onclick="nav('admin-login')" title="Admin"><i class="fas fa-lock"></i></span></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════════════════
+     PAGE: HOME
+════════════════════════════════════════════ -->
+<div class="page" id="pg-home">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-ov"></div>
+      <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&q=80" alt="IronForge Gym"/>
+    </div>
+    <div class="hero-ct">
+      <p class="h-tag">Welcome to IronForge</p>
+      <h1 class="h-title">FORGE YOUR<br/><span>LEGACY</span></h1>
+      <p class="h-sub">Where iron meets will. Transform your body, elevate your mind, and become the strongest version of yourself.</p>
+      <div class="h-btns">
+        <span class="btn btn-red btn-lg" onclick="nav('register')">Start Today <i class="fas fa-arrow-right"></i></span>
+        <span class="btn btn-out" onclick="nav('programs')">View Programs</span>
+      </div>
+      <div class="h-stats">
+        <div class="stat"><span class="s-num" data-target="1200">0</span><span class="s-plus">+</span><p>Members</p></div>
+        <div class="s-div"></div>
+        <div class="stat"><span class="s-num" data-target="15">0</span><span class="s-plus">+</span><p>Trainers</p></div>
+        <div class="s-div"></div>
+        <div class="stat"><span class="s-num" data-target="8">0</span><span class="s-plus">+</span><p>Years</p></div>
+      </div>
+    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="scroll-line"></div></div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="sec" style="background:var(--bg)">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="tag">Why Choose Us</p>
+        <h2 class="title">MORE THAN A <span>GYM</span></h2>
+        <p class="sub">Everything you need to achieve your fitness goals under one roof.</p>
+      </div>
+      <div class="feat-grid">
+        <div class="feat-card"><div class="feat-icon"><i class="fas fa-bolt"></i></div><h3>Elite Equipment</h3><p>State-of-the-art machines and free weights, maintained daily for peak performance.</p></div>
+        <div class="feat-card"><div class="feat-icon"><i class="fas fa-user-tie"></i></div><h3>Expert Trainers</h3><p>Certified professionals who design personalized programs for your unique goals.</p></div>
+        <div class="feat-card"><div class="feat-icon"><i class="fas fa-clock"></i></div><h3>24/7 Access</h3><p>Train on your schedule. Our doors are always open for members around the clock.</p></div>
+        <div class="feat-card"><div class="feat-icon"><i class="fas fa-fire"></i></div><h3>Diverse Programs</h3><p>Strength, cardio, yoga, HIIT — programs for every fitness level and goal.</p></div>
+        <div class="feat-card"><div class="feat-icon"><i class="fas fa-utensils"></i></div><h3>Nutrition Support</h3><p>In-house nutrition consultation and diet planning with certified dietitians.</p></div>
+        <div class="feat-card"><div class="feat-icon"><i class="fas fa-spa"></i></div><h3>Recovery Zone</h3><p>Sauna, steam room, and massage services for optimal post-workout recovery.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <div class="gstrip">
+    <div class="gtrack">
+      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1549060279-7e168fcee0c2?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&q=80" alt=""/>
+      <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&q=80" alt=""/>
+    </div>
+  </div>
+
+  <!-- PROGRAMS PREVIEW -->
+  <section class="sec" style="background:var(--bg2)">
+    <div class="wrap">
+      <div class="sec-head"><p class="tag">What We Offer</p><h2 class="title">OUR <span>PROGRAMS</span></h2></div>
+      <div class="prog-grid">
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=500&q=80" alt=""/><div class="prog-info"><h3>Strength Training</h3><p>Build raw power and muscle mass with structured progressive overload programs.</p><span class="btn btn-ghost" style="padding:7px 18px;font-size:.82rem;" onclick="nav('programs')">Learn More <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=500&q=80" alt=""/><div class="prog-info"><h3>Cardio & Endurance</h3><p>Boost your stamina, burn fat, and improve cardiovascular health.</p><span class="btn btn-ghost" style="padding:7px 18px;font-size:.82rem;" onclick="nav('programs')">Learn More <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&q=80" alt=""/><div class="prog-info"><h3>Yoga & Flexibility</h3><p>Improve mobility, reduce stress, and find balance with expert guidance.</p><span class="btn btn-ghost" style="padding:7px 18px;font-size:.82rem;" onclick="nav('programs')">Learn More <i class="fas fa-arrow-right"></i></span></div></div>
+      </div>
+      <div class="center" style="margin-top:44px"><span class="btn btn-red" onclick="nav('programs')">View All Programs</span></div>
+    </div>
+  </section>
+
+  <!-- CLIENTS BANNER -->
+  <section class="sec cl-ban">
+    <div class="wrap">
+      <div class="cl-ban-in">
+        <div class="cl-ban-text">
+          <p class="tag">Our Community</p>
+          <h2>Meet Our <span>Members</span></h2>
+          <p>Browse our growing community of dedicated athletes and fitness enthusiasts — all powered by real-time Firebase.</p>
+          <span class="btn btn-red" onclick="nav('clients')">View All Clients <i class="fas fa-users"></i></span>
+        </div>
+        <div class="cl-ban-img"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&q=80" alt="Members"/></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="sec" style="background:var(--bg)">
+    <div class="wrap">
+      <div class="sec-head"><p class="tag">Success Stories</p><h2 class="title">WHAT MEMBERS <span>SAY</span></h2></div>
+      <div class="testi-grid">
+        <div class="testi"><div class="stars">★★★★★</div><p>"IronForge completely changed my life. Lost 30kg in 8 months with their structured programs and amazing trainers!"</p><div class="t-auth"><img src="https://i.pravatar.cc/60?img=1" alt=""/><div><strong>Rahul Sharma</strong><span>Member since 2023</span></div></div></div>
+        <div class="testi"><div class="stars">★★★★★</div><p>"Best gym in the city. The 24/7 access is a game changer for my late-night workout sessions."</p><div class="t-auth"><img src="https://i.pravatar.cc/60?img=5" alt=""/><div><strong>Priya Nair</strong><span>Member since 2022</span></div></div></div>
+        <div class="testi"><div class="stars">★★★★★</div><p>"The nutrition guidance combined with personal training made all the difference in my transformation journey."</p><div class="t-auth"><img src="https://i.pravatar.cc/60?img=8" alt=""/><div><strong>Arjun Mehta</strong><span>Member since 2024</span></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-ban">
+    <div class="cta-ban-bg"><img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=1600&q=80" alt=""/><div class="cta-ov"></div></div>
+    <div class="wrap cta-ct">
+      <h2>READY TO START YOUR<br/><span>TRANSFORMATION?</span></h2>
+      <p>Join over 1,200 members who have already changed their lives at IronForge.</p>
+      <span class="btn btn-red btn-lg" onclick="nav('register')">Register Now – It's Free <i class="fas fa-arrow-right"></i></span>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-brand">
+          <div class="logo" onclick="nav('home')" style="cursor:pointer"><i class="fas fa-dumbbell"></i> IRON<em>FORGE</em></div>
+          <p>Where iron meets will. Your transformation starts here.</p>
+          <div class="soc-links"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a><a href="#"><i class="fab fa-youtube"></i></a><a href="#"><i class="fab fa-twitter"></i></a></div>
+        </div>
+        <div class="foot-col"><h4>Quick Links</h4><ul><li><span onclick="nav('home')">Home</span></li><li><span onclick="nav('about')">About</span></li><li><span onclick="nav('programs')">Programs</span></li><li><span onclick="nav('clients')">Clients</span></li><li><span onclick="nav('register')">Register</span></li></ul></div>
+        <div class="foot-col"><h4>Programs</h4><ul><li><span onclick="nav('programs')">Strength Training</span></li><li><span onclick="nav('programs')">Cardio</span></li><li><span onclick="nav('programs')">Yoga</span></li><li><span onclick="nav('programs')">HIIT</span></li><li><span onclick="nav('programs')">Boxing</span></li></ul></div>
+        <div class="foot-col"><h4>Contact</h4><p><i class="fas fa-map-marker-alt"></i>42 Power Street, Fitness City</p><p><i class="fas fa-phone"></i>+91 98765 43210</p><p><i class="fas fa-envelope"></i>info@ironforge.com</p><p><i class="fas fa-clock"></i>Mon–Sat: 5AM – 11PM</p></div>
+      </div>
+      <div class="foot-bot"><p>© 2025 IronForge Gym. All rights reserved.</p><span class="adm-foot-link" onclick="nav('admin-login')"><i class="fas fa-lock"></i> Admin</span></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: ABOUT
+════════════════════════════════════════════ -->
+<div class="page" id="pg-about">
+  <div class="pg-hero">
+    <div class="pg-hero-bg"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1600&q=80" alt=""/><div class="pg-hero-ov"></div></div>
+    <div class="wrap pg-hero-ct"><p class="breadcrumb"><span onclick="nav('home')" class="a">Home</span> / About</p><h1>ABOUT <span>US</span></h1></div>
+  </div>
+  <section class="sec" style="background:var(--bg)">
+    <div class="wrap">
+      <div class="ab-grid">
+        <div class="ab-img-wrap">
+          <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=700&q=80" alt="About"/>
+          <div class="ab-badge"><div class="n">8+</div><div class="l">YEARS OF<br/>EXCELLENCE</div></div>
+        </div>
+        <div class="ab-text">
+          <p class="tag">Our Story</p>
+          <h2>WE BUILD <span>CHAMPIONS</span></h2>
+          <p>IronForge was founded in 2017 with one vision: to create a space where ordinary people achieve extraordinary results. From a small 2,000 sq ft facility, we've grown into a 15,000 sq ft powerhouse of fitness with over 1,200 active members.</p>
+          <p>Our philosophy is simple — great equipment, greater coaching, and the greatest community. We believe fitness is a journey, not a destination, and we're here every step of the way.</p>
+          <p>Whether you're a first-timer walking through our doors or a competitive athlete pushing limits, IronForge is your home.</p>
+          <div class="ab-vals">
+            <div class="ab-val"><i class="fas fa-check-circle"></i>Certified Expert Trainers</div>
+            <div class="ab-val"><i class="fas fa-check-circle"></i>Premium Equipment</div>
+            <div class="ab-val"><i class="fas fa-check-circle"></i>Inclusive Environment</div>
+            <div class="ab-val"><i class="fas fa-check-circle"></i>Proven Results</div>
+            <div class="ab-val"><i class="fas fa-check-circle"></i>Nutrition Guidance</div>
+            <div class="ab-val"><i class="fas fa-check-circle"></i>24/7 Operations</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section style="background:var(--red);padding:56px 0">
+    <div class="wrap">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:36px;text-align:center;color:#fff">
+        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1">1200<span style="color:rgba(255,255,255,.55)">+</span></div><p style="font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;opacity:.85;margin-top:5px">Active Members</p></div>
+        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1">15<span style="color:rgba(255,255,255,.55)">+</span></div><p style="font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;opacity:.85;margin-top:5px">Expert Trainers</p></div>
+        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1">8<span style="color:rgba(255,255,255,.55)">+</span></div><p style="font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;opacity:.85;margin-top:5px">Years Experience</p></div>
+        <div><div style="font-family:'Bebas Neue',sans-serif;font-size:3.8rem;line-height:1">20<span style="color:rgba(255,255,255,.55)">+</span></div><p style="font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;opacity:.85;margin-top:5px">Programs Offered</p></div>
+      </div>
+    </div>
+  </section>
+  <section class="sec" style="background:var(--bg2)">
+    <div class="wrap">
+      <div class="sec-head"><p class="tag">Meet The Team</p><h2 class="title">OUR <span>TRAINERS</span></h2></div>
+      <div class="trainer-grid">
+        <div class="trainer"><div class="tr-img"><img src="https://images.unsplash.com/photo-1597347316205-36f6c451902a?w=400&q=80" alt=""/><div class="tr-soc"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a></div></div><div class="tr-info"><h3>Vikram Singh</h3><p class="role">Head Strength Coach</p></div></div>
+        <div class="trainer"><div class="tr-img"><img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&q=80" alt=""/><div class="tr-soc"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a></div></div><div class="tr-info"><h3>Anjali Rao</h3><p class="role">Yoga & Wellness Expert</p></div></div>
+        <div class="trainer"><div class="tr-img"><img src="https://images.unsplash.com/photo-1544033527-b192daee1f5b?w=400&q=80" alt=""/><div class="tr-soc"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a></div></div><div class="tr-info"><h3>Rohan Kapoor</h3><p class="role">HIIT & Cardio Specialist</p></div></div>
+        <div class="trainer"><div class="tr-img"><img src="https://images.unsplash.com/photo-1534367610401-9f5ed68180aa?w=400&q=80" alt=""/><div class="tr-soc"><a href="#"><i class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-facebook"></i></a></div></div><div class="tr-info"><h3>Divya Patel</h3><p class="role">Nutrition & Diet Coach</p></div></div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer"><div class="wrap"><div class="foot-bot" style="border-top:none;padding-top:28px;padding-bottom:18px"><p>© 2025 IronForge Gym. All rights reserved.</p><span class="adm-foot-link" onclick="nav('admin-login')"><i class="fas fa-lock"></i> Admin</span></div></div></footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: PROGRAMS
+════════════════════════════════════════════ -->
+<div class="page" id="pg-programs">
+  <div class="pg-hero">
+    <div class="pg-hero-bg"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600&q=80" alt=""/><div class="pg-hero-ov"></div></div>
+    <div class="wrap pg-hero-ct"><p class="breadcrumb"><span onclick="nav('home')">Home</span> / Programs</p><h1>OUR <span>PROGRAMS</span></h1></div>
+  </div>
+  <section class="sec" style="background:var(--bg)">
+    <div class="wrap">
+      <div class="sec-head"><p class="tag">What We Offer</p><h2 class="title">FIND YOUR <span>PERFECT FIT</span></h2><p class="sub">Diverse programs designed for every fitness level, goal, and lifestyle.</p></div>
+      <div class="prog-grid">
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=500&q=80" alt=""/><div class="prog-info"><h3>Strength Training</h3><span class="badge-sm">All Levels</span><span class="badge-sm">Mon–Sat</span><p>Build raw power and muscle mass with structured progressive overload programs.</p><span class="btn btn-red" style="padding:9px 20px;font-size:.82rem;" onclick="nav('register')">Join Program <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=500&q=80" alt=""/><div class="prog-info"><h3>Cardio & Endurance</h3><span class="badge-sm">Beginner+</span><span class="badge-sm">Daily</span><p>Boost stamina, burn fat, and improve cardiovascular health with high-energy sessions.</p><span class="btn btn-red" style="padding:9px 20px;font-size:.82rem;" onclick="nav('register')">Join Program <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&q=80" alt=""/><div class="prog-info"><h3>Yoga & Flexibility</h3><span class="badge-sm">All Levels</span><span class="badge-sm">Morning</span><p>Improve mobility, reduce stress, and find balance with our certified yoga instructors.</p><span class="btn btn-red" style="padding:9px 20px;font-size:.82rem;" onclick="nav('register')">Join Program <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1549576490-b0b4831ef60a?w=500&q=80" alt=""/><div class="prog-info"><h3>HIIT Training</h3><span class="badge-sm">Intermediate</span><span class="badge-sm">Tue/Thu/Sat</span><p>High-intensity intervals that push your limits, torch calories, and deliver results fast.</p><span class="btn btn-red" style="padding:9px 20px;font-size:.82rem;" onclick="nav('register')">Join Program <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1591117207239-788bf8de6c3b?w=500&q=80" alt=""/><div class="prog-info"><h3>Boxing & Combat</h3><span class="badge-sm">All Levels</span><span class="badge-sm">Wed/Fri</span><p>Learn boxing fundamentals, build agility, coordination, and unleash stress powerfully.</p><span class="btn btn-red" style="padding:9px 20px;font-size:.82rem;" onclick="nav('register')">Join Program <i class="fas fa-arrow-right"></i></span></div></div>
+        <div class="prog-card"><img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=500&q=80" alt=""/><div class="prog-info"><h3>Personal Training</h3><span class="badge-sm">All Levels</span><span class="badge-sm">Flexible</span><p>One-on-one sessions fully customized to your body, goals, and schedule. Maximum results.</p><span class="btn btn-red" style="padding:9px 20px;font-size:.82rem;" onclick="nav('register')">Join Program <i class="fas fa-arrow-right"></i></span></div></div>
+      </div>
+    </div>
+  </section>
+  <section class="sec" style="background:var(--bg2)">
+    <div class="wrap">
+      <div class="sec-head"><p class="tag">Membership Plans</p><h2 class="title">SIMPLE <span>PRICING</span></h2><p class="sub">No hidden fees. Choose the plan that suits your goals and budget.</p></div>
+      <div class="plans-grid">
+        <div class="plan"><h3>Starter</h3><div class="plan-price"><span class="amt">₹999</span><span class="per">/month</span></div><ul class="plan-feats"><li><i class="fas fa-check"></i>Gym Floor Access</li><li><i class="fas fa-check"></i>Locker Room</li><li><i class="fas fa-check"></i>Basic Equipment</li><li><i class="fas fa-check"></i>1 Group Class/Week</li><li style="opacity:.3"><i class="fas fa-times"></i>Personal Trainer</li><li style="opacity:.3"><i class="fas fa-times"></i>Nutrition Plan</li></ul><span class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="nav('register')">Get Started</span></div>
+        <div class="plan hot"><span class="plan-top-badge">Most Popular</span><h3>Pro</h3><div class="plan-price"><span class="amt">₹1999</span><span class="per">/month</span></div><ul class="plan-feats"><li><i class="fas fa-check"></i>Full Gym Access 24/7</li><li><i class="fas fa-check"></i>All Group Classes</li><li><i class="fas fa-check"></i>Locker + Towel</li><li><i class="fas fa-check"></i>4 PT Sessions/Month</li><li><i class="fas fa-check"></i>Nutrition Consultation</li><li style="opacity:.6"><i class="fas fa-times"></i>Recovery Zone</li></ul><span class="btn" style="width:100%;justify-content:center;background:#fff;color:var(--red);font-weight:700;border-radius:50px;padding:13px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer" onclick="nav('register')">Get Started</span></div>
+        <div class="plan"><h3>Elite</h3><div class="plan-price"><span class="amt">₹3499</span><span class="per">/month</span></div><ul class="plan-feats"><li><i class="fas fa-check"></i>Everything in Pro</li><li><i class="fas fa-check"></i>Unlimited PT Sessions</li><li><i class="fas fa-check"></i>Recovery Zone Access</li><li><i class="fas fa-check"></i>Monthly Body Analysis</li><li><i class="fas fa-check"></i>Custom Meal Plan</li><li><i class="fas fa-check"></i>Priority Booking</li></ul><span class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="nav('register')">Get Started</span></div>
+      </div>
+    </div>
+  </section>
+  <footer class="footer"><div class="wrap"><div class="foot-bot" style="border-top:none;padding-top:28px;padding-bottom:18px"><p>© 2025 IronForge Gym.</p><span class="adm-foot-link" onclick="nav('admin-login')"><i class="fas fa-lock"></i> Admin</span></div></div></footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: REGISTER
+════════════════════════════════════════════ -->
+<div class="page" id="pg-register" style="padding-top:var(--nav)">
+  <div class="reg-wrap">
+    <div class="reg-vis">
+      <img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?w=800&q=80" alt=""/>
+      <div class="reg-vis-ov">
+        <i class="fas fa-dumbbell" style="font-size:2.8rem;margin-bottom:14px"></i>
+        <h2>START YOUR<br/>JOURNEY TODAY</h2>
+        <p style="opacity:.85;font-size:.95rem;margin-top:10px">Join 1,200+ members who transformed their lives at IronForge.</p>
+        <div style="display:flex;flex-direction:column;gap:13px;width:100%;max-width:300px;margin-top:28px">
+          <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:12px;padding:14px"><i class="fas fa-bolt" style="color:var(--gold);font-size:1.2rem"></i><div style="text-align:left"><strong style="font-size:.9rem">Elite Equipment</strong><p style="font-size:.76rem;opacity:.8;margin-top:1px">State-of-the-art machines</p></div></div>
+          <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:12px;padding:14px"><i class="fas fa-user-tie" style="color:var(--gold);font-size:1.2rem"></i><div style="text-align:left"><strong style="font-size:.9rem">Expert Trainers</strong><p style="font-size:.76rem;opacity:.8;margin-top:1px">Certified professionals</p></div></div>
+          <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.12);border-radius:12px;padding:14px"><i class="fas fa-clock" style="color:var(--gold);font-size:1.2rem"></i><div style="text-align:left"><strong style="font-size:.9rem">24/7 Access</strong><p style="font-size:.76rem;opacity:.8;margin-top:1px">Train on your schedule</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="reg-form-sec">
+      <div class="reg-inner">
+        <p class="tag" style="text-align:left">Get Started</p>
+        <h2>JOIN <span style="color:var(--red)">IRONFORGE</span></h2>
+        <p>Fill in your details and our team will contact you shortly.</p>
+        <div class="success-msg" id="regSuccess"><i class="fas fa-check-circle" style="font-size:1.8rem;display:block;margin-bottom:8px"></i><strong>Registration Successful!</strong><br/>We'll contact you within 24 hours.</div>
+        <form id="regForm" action="https://formspree.io/f/mkopkvkp" method="POST">
+          <input type="hidden" name="_subject" value="New Gym Registration – IronForge"/>
+          <div class="fg"><label>Full Name *</label><div class="ico-wrap"><i class="fas fa-user"></i><input type="text" name="name" id="rName" placeholder="Your full name" required/></div></div>
+          <div class="fg"><label>Email Address *</label><div class="ico-wrap"><i class="fas fa-envelope"></i><input type="email" name="email" id="rEmail" placeholder="Your email" required/></div></div>
+          <div class="fg"><label>Mobile Number *</label><div class="ico-wrap"><i class="fas fa-phone"></i><input type="tel" name="mobile" id="rMobile" placeholder="Your mobile number" required/></div></div>
+          <div class="fg"><label>Interested Plan</label><select name="plan"><option value="">Select a plan</option><option>Starter – ₹999/month</option><option>Pro – ₹1999/month</option><option>Elite – ₹3499/month</option></select></div>
+          <div class="fg"><label>Your Goal</label><select name="goal"><option value="">Select your goal</option><option>Weight Loss</option><option>Muscle Building</option><option>Improve Stamina</option><option>General Fitness</option><option>Stress Relief</option><option>Sport Performance</option></select></div>
+          <button type="submit" class="sub-btn"><i class="fas fa-dumbbell"></i> Register Now – It's Free</button>
+        </form>
+        <p style="text-align:center;margin-top:18px;font-size:.82rem;color:var(--text3)">Already a member? <span style="color:var(--red);font-weight:700;cursor:pointer" onclick="nav('clients')">View clients</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: CLIENTS
+════════════════════════════════════════════ -->
+<div class="page" id="pg-clients">
+  <div class="pg-hero">
+    <div class="pg-hero-bg"><img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=80" alt=""/><div class="pg-hero-ov"></div></div>
+    <div class="wrap pg-hero-ct"><p class="breadcrumb"><span onclick="nav('home')">Home</span> / Clients</p><h1>OUR <span>MEMBERS</span></h1></div>
+  </div>
+  <section class="sec" style="background:var(--bg)">
+    <div class="wrap">
+      <div id="cStats" class="c-stats"></div>
+      <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="cSearch" placeholder="Search member by name..." oninput="renderClients()"/></div>
+      <div class="filt-tabs">
+        <button class="ftab on" onclick="setFilter('all',this)">All Members</button>
+        <button class="ftab" onclick="setFilter('active',this)"><i class="fas fa-circle" style="font-size:.45rem;color:#22c55e;margin-right:4px"></i>Active</button>
+        <button class="ftab" onclick="setFilter('expired',this)"><i class="fas fa-circle" style="font-size:.45rem;color:var(--red);margin-right:4px"></i>Expired</button>
+      </div>
+      <div class="clients-grid" id="cGrid"></div>
+      <div class="empty-state" id="cEmpty" style="display:none"><i class="fas fa-search"></i><h3>No members found</h3><p>Try a different name.</p></div>
+      <div class="empty-state" id="cNone" style="display:none"><i class="fas fa-dumbbell"></i><h3>No Members Yet</h3><p>The admin hasn't added any members yet.</p><span class="btn btn-red" style="margin-top:22px;display:inline-flex" onclick="nav('register')">Register Now</span></div>
+    </div>
+  </section>
+  <footer class="footer"><div class="wrap"><div class="foot-bot" style="border-top:none;padding-top:28px;padding-bottom:18px"><p>© 2025 IronForge Gym.</p><span class="adm-foot-link" onclick="nav('admin-login')"><i class="fas fa-lock"></i> Admin</span></div></div></footer>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: ADMIN LOGIN
+════════════════════════════════════════════ -->
+<div class="page" id="pg-admin-login" style="padding-top:var(--nav)">
+  <div class="adm-login-wrap">
+    <div class="adm-box">
+      <div class="adm-icon"><i class="fas fa-shield-alt"></i></div>
+      <h2>ADMIN <span style="color:var(--red)">ACCESS</span></h2>
+      <p>Enter your admin password to access the dashboard.</p>
+      <div class="fg"><label>Admin Password</label><div class="ico-wrap"><i class="fas fa-lock"></i><input type="password" id="admPass" placeholder="Enter password" onkeydown="if(event.key==='Enter')checkAdmPass()"/></div></div>
+      <button class="sub-btn" onclick="checkAdmPass()"><i class="fas fa-arrow-right"></i> Access Dashboard</button>
+      <div class="adm-err" id="admErr"><i class="fas fa-exclamation-triangle"></i> Incorrect password. Try again.</div>
+      <p style="text-align:center;margin-top:22px;font-size:.82rem"><span style="color:var(--red);cursor:pointer;font-weight:700" onclick="nav('home')"><i class="fas fa-arrow-left"></i> Back to Website</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     PAGE: ADMIN DASHBOARD
+════════════════════════════════════════════ -->
+<div class="page" id="pg-admin" style="padding-top:var(--nav)">
+  <div class="adm-bar">
+    <div class="adm-tabs-row">
+      <button class="adm-tab on" onclick="admTab('join',this)"><i class="fas fa-user-plus" style="margin-right:6px"></i>Join Member</button>
+      <button class="adm-tab" onclick="admTab('edit',this)"><i class="fas fa-edit" style="margin-right:6px"></i>Edit Plan</button>
+      <button class="adm-tab" onclick="nav('clients')" style="margin-left:auto"><i class="fas fa-users" style="margin-right:6px"></i>View Clients</button>
+      <button class="adm-tab" onclick="nav('home')"><i class="fas fa-home" style="margin-right:6px"></i>Home</button>
+      <button class="adm-tab" onclick="admLogout()" style="color:var(--red)"><i class="fas fa-sign-out-alt" style="margin-right:6px"></i>Logout</button>
+    </div>
+  </div>
+
+  <!-- JOIN SECTION -->
+  <div class="adm-sec on" id="adm-join">
+    <div class="wrap">
+      <div class="adm-card">
+        <h3><i class="fas fa-user-plus" style="color:var(--red);margin-right:10px"></i>Add New Member</h3>
+        <div class="f-row">
+          <div class="fg"><label>Full Name *</label><div class="ico-wrap"><i class="fas fa-user"></i><input type="text" id="j_name" placeholder="Member's full name"/></div></div>
+          <div class="fg"><label>Age *</label><div class="ico-wrap"><i class="fas fa-birthday-cake"></i><input type="number" id="j_age" placeholder="Age" min="10" max="99"/></div></div>
+        </div>
+        <div class="fg"><label>Membership Plan *</label><select id="j_plan"><option value="">Select plan</option><option value="Starter">Starter – ₹999/month</option><option value="Pro">Pro – ₹1999/month</option><option value="Elite">Elite – ₹3499/month</option></select></div>
+        <div class="f-row">
+          <div class="fg"><label>Joining Date *</label><div class="ico-wrap"><i class="fas fa-calendar-plus"></i><input type="date" id="j_start"/></div></div>
+          <div class="fg"><label>Ending Date *</label><div class="ico-wrap"><i class="fas fa-calendar-minus"></i><input type="date" id="j_end"/></div></div>
+        </div>
+        <div class="fg">
+          <label>Profile Picture</label>
+          <div class="upload-area" onclick="document.getElementById('j_pic').click()">
+            <img id="j_preview" class="prev" alt=""/>
+            <i class="fas fa-cloud-upload-alt" id="j_icon"></i>
+            <p id="j_txt">Click to select photo from folder</p>
+            <input type="file" id="j_pic" accept="image/*" style="display:none" onchange="previewPic(this)"/>
+          </div>
+        </div>
+        <button class="sub-btn" onclick="addMember()"><i class="fas fa-plus"></i> Add Member</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT SECTION -->
+  <div class="adm-sec" id="adm-edit">
+    <div class="wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:14px">
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.7rem"><i class="fas fa-edit" style="color:var(--red);margin-right:10px"></i>Edit Members</h3>
+        <div style="position:relative"><i class="fas fa-search" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text3)"></i><input type="text" id="admSearch" placeholder="Search..." oninput="renderAdmList()" style="padding:10px 16px 10px 38px;border-radius:50px;border:2px solid var(--border);background:var(--bg2);font-family:inherit;font-size:.88rem;color:var(--text);outline:none;min-width:200px"/></div>
+      </div>
+      <div class="adm-list" id="admList"></div>
+      <div class="empty-state" id="admEmpty" style="display:none"><i class="fas fa-users"></i><h3>No members yet</h3><p>Add a member using the Join tab.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     MODALS
+════════════════════════════════════════════ -->
+<!-- Client detail modal -->
+<div class="modal-ov" id="cModal" onclick="if(event.target===this)closeCModal()">
+  <div class="modal">
+    <button class="m-close" onclick="closeCModal()"><i class="fas fa-times"></i></button>
+    <div id="cModalBody"></div>
+  </div>
+</div>
+<!-- Edit member modal -->
+<div class="modal-ov" id="eModal" onclick="if(event.target===this)closeEModal()">
+  <div class="modal">
+    <button class="m-close" onclick="closeEModal()"><i class="fas fa-times"></i></button>
+    <h2 class="m-title">EDIT <span style="color:var(--red)">MEMBER</span></h2>
+    <input type="hidden" id="e_id"/>
+    <div class="fg"><label>Full Name</label><input type="text" id="e_name" style="width:100%;padding:12px 15px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.93rem;color:var(--text);outline:none"/></div>
+    <div class="fg"><label>Age</label><input type="number" id="e_age" style="width:100%;padding:12px 15px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.93rem;color:var(--text);outline:none"/></div>
+    <div class="fg"><label>Membership Plan</label><select id="e_plan" style="width:100%;padding:12px 15px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.93rem;color:var(--text);outline:none"><option value="Starter">Starter</option><option value="Pro">Pro</option><option value="Elite">Elite</option></select></div>
+    <div class="f-row">
+      <div class="fg"><label>Joining Date</label><input type="date" id="e_start" style="width:100%;padding:12px 15px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.93rem;color:var(--text);outline:none"/></div>
+      <div class="fg"><label>Ending Date</label><input type="date" id="e_end" style="width:100%;padding:12px 15px;background:var(--bg);border:2px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:.93rem;color:var(--text);outline:none"/></div>
+    </div>
+    <button class="sub-btn" onclick="saveEdit()"><i class="fas fa-save"></i> Save Changes</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     FIREBASE + APP LOGIC
+════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, doc, updateDoc, deleteDoc, onSnapshot, query, orderBy
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import {
+  getStorage, ref, uploadString, getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDhY5MeFiuoxjdKdeErnYTiEfk4hlUzIpw",
+  authDomain: "ironforge-gym-web.firebaseapp.com",
+  projectId: "ironforge-gym-web",
+  storageBucket: "ironforge-gym-web.firebasestorage.app",
+  messagingSenderId: "734966117003",
+  appId: "1:734966117003:web:092cbdfe2e79cec0759a8e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// Hide loading screen
+document.getElementById('fb-loading').style.display = 'none';
+
+// ── Real-time listener ──
+let allClients = [];
+onSnapshot(query(collection(db, "clients"), orderBy("createdAt", "desc")), snap => {
+  allClients = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderClients();
+  renderAdmList();
+  renderStats();
+});
+
+// ── ADD MEMBER ──
+window.addMember = async function() {
+  const name  = document.getElementById('j_name').value.trim();
+  const age   = document.getElementById('j_age').value.trim();
+  const plan  = document.getElementById('j_plan').value;
+  const start = document.getElementById('j_start').value;
+  const end   = document.getElementById('j_end').value;
+  const picIn = document.getElementById('j_pic');
+
+  if (!name || !age || !plan || !start || !end) {
+    showToast('Please fill all required fields.', 'err'); return;
+  }
+
+  const save = async (picUrl) => {
+    await addDoc(collection(db, "clients"), {
+      name, age, plan, start, end,
+      pic: picUrl || null,
+      createdAt: Date.now()
+    });
+    showToast(`${name} added successfully!`, 'ok');
+    document.getElementById('j_name').value = '';
+    document.getElementById('j_age').value = '';
+    document.getElementById('j_plan').value = '';
+    document.getElementById('j_end').value = '';
+    document.getElementById('j_pic').value = '';
+    document.getElementById('j_preview').style.display = 'none';
+    document.getElementById('j_icon').style.display = 'block';
+    document.getElementById('j_txt').textContent = 'Click to select photo from folder';
+  };
+
+  if (picIn.files[0]) {
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try {
+        // Store image as base64 data URL directly in Firestore (for simplicity)
+        // For production, use Firebase Storage upload
+        await save(e.target.result);
+      } catch(err) { showToast('Added without photo (storage error).', 'err'); await save(null); }
+    };
+    reader.readAsDataURL(picIn.files[0]);
+  } else {
+    await save(null);
+  }
+};
+
+// ── DELETE MEMBER ──
+window.deleteMember = async function(id, name) {
+  if (!confirm(`Delete ${name}? This cannot be undone.`)) return;
+  await deleteDoc(doc(db, "clients", id));
+  showToast(`${name} removed.`, 'err');
+};
+
+// ── OPEN EDIT ──
+window.openEdit = function(id) {
+  const c = allClients.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('e_id').value = id;
+  document.getElementById('e_name').value = c.name;
+  document.getElementById('e_age').value = c.age;
+  document.getElementById('e_plan').value = c.plan;
+  document.getElementById('e_start').value = c.start;
+  document.getElementById('e_end').value = c.end;
+  document.getElementById('eModal').classList.add('open');
+};
+
+// ── SAVE EDIT ──
+window.saveEdit = async function() {
+  const id = document.getElementById('e_id').value;
+  const name  = document.getElementById('e_name').value.trim();
+  const age   = document.getElementById('e_age').value;
+  const plan  = document.getElementById('e_plan').value;
+  const start = document.getElementById('e_start').value;
+  const end   = document.getElementById('e_end').value;
+  if (!name) { showToast('Name is required.', 'err'); return; }
+  await updateDoc(doc(db, "clients", id), { name, age, plan, start, end });
+  closeEModal();
+  showToast('Member updated!', 'ok');
+};
+
+// ── RENDER CLIENTS (public page) ──
+let cFilter = 'all';
+window.cFilter = cFilter;
+
+window.setFilter = function(f, btn) {
+  cFilter = f;
+  document.querySelectorAll('.ftab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderClients();
+};
+
+window.renderClients = function() {
+  const q = (document.getElementById('cSearch')?.value || '').toLowerCase();
+  let list = [...allClients];
+  if (cFilter === 'active')  list = list.filter(c => !isExp(c.end));
+  if (cFilter === 'expired') list = list.filter(c => isExp(c.end));
+  if (q) list = list.filter(c => c.name.toLowerCase().includes(q));
+
+  const grid = document.getElementById('cGrid');
+  const empty = document.getElementById('cEmpty');
+  const none  = document.getElementById('cNone');
+  if (!grid) return;
+
+  if (!allClients.length) {
+    grid.innerHTML = ''; empty.style.display = 'none'; none.style.display = 'block'; return;
+  }
+  none.style.display = 'none';
+  if (!list.length) {
+    grid.innerHTML = ''; empty.style.display = 'block'; return;
+  }
+  empty.style.display = 'none';
+
+  grid.innerHTML = list.map(c => `
+    <div class="cl-card" onclick="openCModal('${c.id}')">
+      ${c.pic
+        ? `<img src="${c.pic}" alt="${c.name}" class="cl-av" style="object-fit:cover"/>`
+        : `<div class="cl-av">${c.name[0].toUpperCase()}</div>`}
+      <h3>${c.name}</h3>
+      <span class="cl-plan">${c.plan}</span>
+      <div class="cl-dates">Joined: ${fmtDate(c.start)}</div>
+      <div class="cl-dates">Ends: ${fmtDate(c.end)}</div>
+      <div class="cl-status ${isExp(c.end)?'exp':'act'}">
+        <i class="fas fa-circle"></i> ${isExp(c.end)?'Expired':'Active'}
+      </div>
+    </div>
+  `).join('');
+};
+
+// ── RENDER STATS ──
+window.renderStats = function() {
+  const sb = document.getElementById('cStats');
+  if (!sb) return;
+  const act = allClients.filter(c => !isExp(c.end)).length;
+  const exp = allClients.length - act;
+  sb.innerHTML = `
+    <div class="c-stat red"><div class="n">${allClients.length}</div><div class="l">Total Members</div></div>
+    <div class="c-stat green"><div class="n">${act}</div><div class="l">Active</div></div>
+    <div class="c-stat red"><div class="n">${exp}</div><div class="l">Expired</div></div>
+  `;
+};
+
+// ── OPEN CLIENT MODAL ──
+window.openCModal = function(id) {
+  const c = allClients.find(x => x.id === id);
+  if (!c) return;
+  const exp = isExp(c.end);
+  document.getElementById('cModalBody').innerHTML = `
+    ${c.pic
+      ? `<img src="${c.pic}" alt="${c.name}" class="m-img"/>`
+      : `<div class="m-av">${c.name[0].toUpperCase()}</div>`}
+    <h2 class="m-title">${c.name}</h2>
+    <div class="m-row"><span>Age</span><span>${c.age} years</span></div>
+    <div class="m-row"><span>Plan</span><span>${c.plan}</span></div>
+    <div class="m-row"><span>Joining Date</span><span>${fmtDate(c.start)}</span></div>
+    <div class="m-row"><span>Plan Ends</span><span>${fmtDate(c.end)}</span></div>
+    <div class="m-row"><span>Status</span><span class="cl-status ${exp?'exp':'act'}" style="display:inline-flex;align-items:center;gap:5px"><i class="fas fa-circle"></i> ${exp?'Expired':'Active Member'}</span></div>
+  `;
+  document.getElementById('cModal').classList.add('open');
+};
+
+// ── RENDER ADMIN LIST ──
+window.renderAdmList = function() {
+  const q = (document.getElementById('admSearch')?.value || '').toLowerCase();
+  const list = q ? allClients.filter(c => c.name.toLowerCase().includes(q)) : allClients;
+  const el = document.getElementById('admList');
+  const empEl = document.getElementById('admEmpty');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = ''; empEl.style.display = 'block'; return; }
+  empEl.style.display = 'none';
+  el.innerHTML = list.map(c => `
+    <div class="adm-row">
+      ${c.pic
+        ? `<img src="${c.pic}" alt="${c.name}"/>`
+        : `<div class="adm-av">${c.name[0].toUpperCase()}</div>`}
+      <div class="adm-info">
+        <h4>${c.name}</h4>
+        <p><strong>${c.plan}</strong> · Age: ${c.age} · ${fmtDate(c.start)} → ${fmtDate(c.end)} · <span class="${isExp(c.end)?'cl-status exp':'cl-status act'}" style="display:inline-flex;align-items:center;gap:4px;font-size:.75rem"><i class="fas fa-circle"></i>${isExp(c.end)?'Expired':'Active'}</span></p>
+      </div>
+      <div class="adm-acts">
+        <button class="edit-btn" onclick="openEdit('${c.id}')"><i class="fas fa-edit"></i> Edit</button>
+        <button class="del-btn" onclick="deleteMember('${c.id}','${c.name}')"><i class="fas fa-trash"></i></button>
+      </div>
+    </div>
+  `).join('');
+};
+</script>
+
+<script>
+/* ══════════════════════════════════════
+   NON-MODULE SCRIPTS (SPA + UI)
+══════════════════════════════════════ */
+
+// ── THEME ──
+const html = document.documentElement;
+const THEME_KEY = 'ig_theme';
+function setTheme(dark) {
+  html.setAttribute('data-theme', dark ? 'dark' : 'light');
+  localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light');
+  document.getElementById('themeIco').className = dark ? 'fas fa-sun' : 'fas fa-moon';
+}
+setTheme(localStorage.getItem(THEME_KEY) === 'dark');
+document.getElementById('themeBtn').addEventListener('click', () =>
+  setTheme(html.getAttribute('data-theme') !== 'dark')
+);
+
+// ── NAVBAR ──
+const navbar = document.getElementById('navbar');
+const ham    = document.getElementById('ham');
+const nlLinks = document.getElementById('navLinks');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('solid', window.scrollY > 40);
+  document.getElementById('scrollTop').classList.toggle('vis', window.scrollY > 400);
+});
+ham.addEventListener('click', () => {
+  ham.classList.toggle('open');
+  nlLinks.classList.toggle('open');
+});
+
+// ── SPA NAVIGATION ──
+const PAGES = ['home','about','programs','register','clients','admin-login','admin'];
+const ADMIN_PASS = 'webdevlp.n';
+
+function nav(page) {
+  // Auth guard for admin
+  if (page === 'admin' && sessionStorage.getItem('ig_admin') !== 'true') {
+    nav('admin-login'); return;
+  }
+  PAGES.forEach(p => {
+    const el = document.getElementById('pg-' + p);
+    if (el) el.classList.toggle('active', p === page);
+  });
+  // Update nav active state
+  document.querySelectorAll('.nl').forEach(l => l.classList.remove('active'));
+
+  // Handle navbar transparency
+  if (page === 'home') {
+    navbar.classList.remove('solid');
+    if (window.scrollY > 40) navbar.classList.add('solid');
+  } else {
+    navbar.classList.add('solid');
+  }
+
+  // Close hamburger
+  ham.classList.remove('open');
+  nlLinks.classList.remove('open');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Page-specific init
+  if (page === 'home') startCounters();
+  if (page === 'admin') {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('j_start').value = today;
+    renderAdmList && renderAdmList();
+  }
+  if (page === 'clients') {
+    renderClients && renderClients();
+    renderStats && renderStats();
+  }
+}
+
+// ── START ──
+nav('home');
+
+// ── ADMIN ──
+window.checkAdmPass = function() {
+  const v = document.getElementById('admPass').value;
+  const errEl = document.getElementById('admErr');
+  if (v === ADMIN_PASS) {
+    sessionStorage.setItem('ig_admin', 'true');
+    document.getElementById('admPass').value = '';
+    nav('admin');
+  } else {
+    errEl.classList.add('show');
+    document.getElementById('admPass').value = '';
+    setTimeout(() => errEl.classList.remove('show'), 3000);
+  }
+};
+window.admLogout = function() {
+  sessionStorage.removeItem('ig_admin');
+  nav('home');
+  showToast('Logged out.', 'ok');
+};
+
+// ── ADMIN TABS ──
+window.admTab = function(tab, btn) {
+  document.querySelectorAll('.adm-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.adm-sec').forEach(s => s.classList.remove('on'));
+  document.getElementById('adm-' + tab).classList.add('on');
+  if (tab === 'edit') renderAdmList && renderAdmList();
+};
+
+// ── MODALS ──
+window.closeCModal = () => document.getElementById('cModal').classList.remove('open');
+window.closeEModal = () => document.getElementById('eModal').classList.remove('open');
+
+// ── PREVIEW IMAGE ──
+window.previewPic = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('j_preview');
+    prev.src = e.target.result;
+    prev.style.display = 'block';
+    document.getElementById('j_icon').style.display = 'none';
+    document.getElementById('j_txt').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+};
+
+// ── TOAST ──
+window.showToast = function(msg, type='ok') {
+  const t = document.getElementById('toast');
+  const ico = type === 'ok' ? 'fa-check-circle' : 'fa-exclamation-circle';
+  t.className = type === 'ok' ? 'ok' : '';
+  t.innerHTML = `<i class="fas ${ico}"></i> ${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3600);
+};
+
+// ── COUNTER ANIMATION ──
+function startCounters() {
+  document.querySelectorAll('.s-num').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    let s = null;
+    const step = ts => {
+      if (!s) s = ts;
+      const prog = Math.min((ts - s) / 1800, 1);
+      el.textContent = Math.floor(prog * target);
+      if (prog < 1) requestAnimationFrame(step);
+      else el.textContent = target;
+    };
+    requestAnimationFrame(step);
+  });
+}
+
+// ── HELPERS ──
+window.isExp = function(endDate) {
+  if (!endDate) return false;
+  return new Date(endDate) < new Date();
+};
+window.fmtDate = function(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+};
+
+// ── REGISTER FORM ──
+document.getElementById('regForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('.sub-btn');
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+  btn.disabled = true;
+  try {
+    const fd = new FormData(this);
+    const res = await fetch('https://formspree.io/f/mkopkvkp', { method:'POST', body: fd, headers:{ 'Accept':'application/json' } });
+    if (res.ok) {
+      document.getElementById('regSuccess').classList.add('show');
+      this.style.display = 'none';
+    } else {
+      showToast('Submission failed. Please try again.', 'err');
+      btn.innerHTML = orig; btn.disabled = false;
+    }
+  } catch { showToast('Network error. Please try again.', 'err'); btn.innerHTML = orig; btn.disabled = false; }
+});
+</script>
+</body>
+</html>
